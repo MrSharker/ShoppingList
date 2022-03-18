@@ -1,0 +1,45 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+#filterForm {
+    display: none;
+    transition: 0.3s;
+}
+
+#filterForm.show {
+    display: block;
+}
+
+#filterForm .form-control {
+    width: auto;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.toggle-button {
+    margin-bottom: 15px;
+}
+
+table form {
+    display: inline-block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}

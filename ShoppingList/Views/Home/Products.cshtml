@@ -1,0 +1,146 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model FilterPageSortModelcs
+
+<h2>Покупки</h2>
+    <button class="navbar-toggler toggle-button" type="button" aria-expanded="false" aria-label="Toggle navigation">
+                <span>Фильтрация</span>
+            </button>
+
+        <form id="filterForm" method="get">
+        <div class="form-inline">
+            <label>Название: </label>
+            <input name="name" value="@Model.FilterViewModel.SelectedName" class="form-control" />
+         
+            <label>Категория: </label>
+            <select name="category" asp-items="@Model.FilterViewModel.Categories" class="form-control">
+                </select>
+ 
+            <input type="submit" value="Фильтр" class="btn btn-outline-dark" />
+        </div>
+    </form>
+
+
+<table class="table">
+    <tr>
+        <th>
+            <a asp-action="Products"
+               asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-category="@(Model.FilterViewModel.SelectedСategory)">Название</a>
+        </th>
+        <th>
+            <a asp-action="Products"
+               asp-route-sortOrder="@(Model.SortViewModel.CategorySort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-category="@(Model.FilterViewModel.SelectedСategory)">Категория</a>
+        </th>
+        <th>
+            Количество
+        </th>
+        <th>
+            Цена
+        </th>
+        <th>
+            <a asp-action="Products"
+               asp-route-sortOrder="@(Model.SortViewModel.DateSort)"
+               asp-route-name="@(Model.FilterViewModel.SelectedName)"
+               asp-route-category="@(Model.FilterViewModel.SelectedСategory)">Дата покупки</a>
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.ReceiptItems)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.Category.GetDescription()
+            </td>
+            <td>
+                @item.Count
+            </td>
+            <td>
+                @item.Price ₽
+            </td>
+            <td>
+                @item.BuyTime.ToShortDateString()
+            </td>
+            <td>
+                @Html.ActionLink("Изменить", "Edit",new { id = @item.Id }, new { @class = "createItem btn btn-default"}) |
+                <form asp-controller="Home" asp-action="Delete" method ="post" asp-route-id="@item.Id">
+                    <input type="submit" class="btn btn-default" value ="Удалить" />
+                </form>
+            </td>
+        </tr>
+    }
+    @{
+        if (!string.IsNullOrEmpty(Model.FilterViewModel.SelectedName) || Model.FilterViewModel.SelectedСategory != 0)
+        {
+        <tr>
+            <td>
+                <b>Cумма</b>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+                <b>@Model.ReceiptItems.Sum(x => x.Price) ₽</b>
+            </td>
+        </tr>            
+        };
+    }
+        
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Products"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+       asp-route-category="@(Model.FilterViewModel.SelectedСategory)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn  btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Products"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+       asp-route-category="@(Model.FilterViewModel.SelectedСategory)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+<div id="modDialog" class="modal fade" >
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+<div>
+    @Html.ActionLink("Добавить покупку", "Create",new { }, new { @class = "createItem"})
+</div>
+    
+
+    @section scripts
+    {
+    <script type="text/javascript">
+ 
+        $(function () {
+            $.ajaxSetup({ cache: false });
+           $(".createItem").click(function (e) {
+ 
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+    }
