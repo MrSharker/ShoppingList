@@ -17,8 +17,15 @@
                 <select name="Category">
                         @{
                             foreach (var cat in Enum.GetValues(typeof(Category)))
-                            {
-                                <option value=@cat>@(((Category)cat).GetDescription())</option>
+                            {   
+                                if((Category)cat == Model.Category)
+                                {
+                                    <option selected="selected" value=@cat>@(((Category)cat).GetDescription())</option>
+                                }
+                                else
+                                {
+                                    <option value=@cat>@(((Category)cat).GetDescription())</option>
+                                }
                             }
                         }
                 </select>
